@@ -23,7 +23,7 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 # Nginx config for SPA routing + API proxy
 RUN cat > /etc/nginx/conf.d/default.conf << 'EOF'
 server {
-    listen 80;
+    listen 3002;
     server_name _;
     root /usr/share/nginx/html;
     index index.html;
@@ -50,6 +50,7 @@ server {
 }
 EOF
 
-EXPOSE 80
+# Expose port
+EXPOSE 3002
 
 CMD ["nginx", "-g", "daemon off;"]
