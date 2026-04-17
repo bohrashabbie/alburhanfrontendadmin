@@ -21,35 +21,7 @@ FROM nginx:alpine AS runner
 COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Nginx config for SPA routing + API proxy
-RUN cat > /etc/nginx/conf.d/default.conf << 'EOF'
-server {
-    listen 80;
-    listen [::]:80;
-    server_name _;
-    root /usr/share/nginx/html;
-    index index.html;
-
-    # API proxy to backend (external URL)
-    location /api/ {
-        proxy_pass http://13.60.4.75:8002/api/;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-
-    # Uploaded media files proxy
-    location /uploads/ {
-        proxy_pass http://13.60.4.75:8002/uploads/;
-        proxy_set_header Host $host;
-    }
-
-    # SPA fallback — all non-file routes serve index.html
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
-}
-EOF
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port
 EXPOSE 80
