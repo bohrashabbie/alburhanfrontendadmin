@@ -28,9 +28,9 @@ server {
     root /usr/share/nginx/html;
     index index.html;
 
-    # API proxy to backend
+    # API proxy to backend (external URL)
     location /api/ {
-        proxy_pass http://backend:8001/api/;
+        proxy_pass http://13.60.4.75:8002/api/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -39,7 +39,7 @@ server {
 
     # Uploaded media files proxy
     location /uploads/ {
-        proxy_pass http://backend:8001/uploads/;
+        proxy_pass http://13.60.4.75:8002/uploads/;
         proxy_set_header Host $host;
     }
 
