@@ -54,10 +54,22 @@ export const remove = (endpoint: string, id: number) =>
   api.delete(`/${endpoint}/${id}`).then((r) => r.data);
 
 // Media
-export const uploadFile = async (file: File) => {
+export interface MediaFileOut {
+  id: number;
+  filename: string;
+  original_name: string | null;
+  file_path: string;
+  file_type: string | null;
+  file_size: number | null;
+  uploaded_by: number | null;
+  created_at: string;
+}
+
+export const uploadFile = async (file: File, folder?: string): Promise<MediaFileOut> => {
   const form = new FormData();
   form.append('file', file);
-  const { data } = await api.post('/media/upload', form);
+  if (folder) form.append('folder', folder);
+  const { data } = await api.post<MediaFileOut>('/media/upload', form);
   return data;
 };
 

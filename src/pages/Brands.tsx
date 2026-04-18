@@ -7,7 +7,7 @@ export default function Brands() {
       endpoint="brands"
       fields={[
         { key: 'name', label: 'Name', required: true },
-        { key: 'logo_url', label: 'Logo URL' },
+        { key: 'logo_url', label: 'Logo', type: 'image', uploadFolder: 'brands' },
         { key: 'website_url', label: 'Website URL', hideInTable: true },
         { key: 'sort_order', label: 'Sort Order', type: 'number' },
         { key: 'is_active', label: 'Active', type: 'checkbox' },

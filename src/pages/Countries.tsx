@@ -13,9 +13,9 @@ export default function Countries() {
         { key: 'firm_name_ar', label: 'Firm Name (AR)', hideInTable: true },
         { key: 'description_en', label: 'Description (EN)', type: 'textarea', hideInTable: true },
         { key: 'description_ar', label: 'Description (AR)', type: 'textarea', hideInTable: true },
-        { key: 'flag_url', label: 'Flag URL', hideInTable: true },
-        { key: 'country_image_url', label: 'Country Image URL', hideInTable: true },
-        { key: 'logo_url', label: 'Logo URL', hideInTable: true },
+        { key: 'flag_url', label: 'Flag', type: 'image', uploadFolder: 'countries/flags', hideInTable: true },
+        { key: 'country_image_url', label: 'Country Image', type: 'image', uploadFolder: 'countries' },
+        { key: 'logo_url', label: 'Logo', type: 'image', uploadFolder: 'countries/logos', hideInTable: true },
         { key: 'sort_order', label: 'Sort Order', type: 'number' },
         { key: 'is_active', label: 'Active', type: 'checkbox' },
       ]}

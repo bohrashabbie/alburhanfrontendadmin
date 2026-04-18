@@ -12,7 +12,7 @@ export default function PageContents() {
         { key: 'title_ar', label: 'Title (AR)', hideInTable: true },
         { key: 'content_en', label: 'Content (EN)', type: 'textarea', hideInTable: true },
         { key: 'content_ar', label: 'Content (AR)', type: 'textarea', hideInTable: true },
-        { key: 'image_url', label: 'Image URL', hideInTable: true },
+        { key: 'image_url', label: 'Image', type: 'image', uploadFolder: 'page-content' },
         { key: 'sort_order', label: 'Sort Order', type: 'number' },
         { key: 'is_active', label: 'Active', type: 'checkbox' },
       ]}

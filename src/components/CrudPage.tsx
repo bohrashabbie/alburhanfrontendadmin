@@ -1,16 +1,18 @@
-import { useState, useEffect } from 'react';
-import { getAll, create, update, remove } from '../services/api';
+import { useState, useEffect, useRef } from 'react';
+import { getAll, create, update, remove, uploadFile } from '../services/api';
 import toast from 'react-hot-toast';
-import { Plus, Pencil, Trash2, X, Save } from 'lucide-react';
+import { Plus, Pencil, Trash2, X, Save, Upload, ImageOff } from 'lucide-react';
 
 export interface FieldDef {
   key: string;
   label: string;
-  type?: 'text' | 'textarea' | 'number' | 'checkbox' | 'select';
+  type?: 'text' | 'textarea' | 'number' | 'checkbox' | 'select' | 'image';
   options?: { value: string; label: string }[];
   required?: boolean;
   width?: string;
   hideInTable?: boolean;
+  /** For type: 'image' — subfolder inside /uploads (defaults to 'media'). */
+  uploadFolder?: string;
 }
 
 interface CrudPageProps {
@@ -19,6 +21,101 @@ interface CrudPageProps {
   fields: FieldDef[];
   idField?: string;
   queryParams?: Record<string, any>;
+}
+
+function resolveImage(path?: string | null): string | null {
+  if (!path) return null;
+  if (/^https?:\/\//i.test(path)) return path;
+  if (path.startsWith('/')) return path;
+  return `/${path}`;
+}
+
+function ImageField({
+  field,
+  value,
+  onChange,
+}: {
+  field: FieldDef;
+  value: string | null | undefined;
+  onChange: (v: string) => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const preview = resolveImage(value);
+
+  const handlePick = () => inputRef.current?.click();
+
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const data = await uploadFile(file, field.uploadFolder);
+      onChange(data.file_path);
+      toast.success('Image uploaded');
+    } catch (err: any) {
+      toast.error(err?.response?.data?.detail || 'Upload failed');
+    } finally {
+      setUploading(false);
+      if (inputRef.current) inputRef.current.value = '';
+    }
+  };
+
+  return (
+    <div className="flex items-start gap-4">
+      <div className="h-24 w-32 flex-shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center">
+        {preview ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={preview}
+            alt="preview"
+            className="h-full w-full object-cover"
+            onError={(e) => {
+              (e.target as HTMLImageElement).style.display = 'none';
+            }}
+          />
+        ) : (
+          <ImageOff size={24} className="text-gray-300" />
+        )}
+      </div>
+      <div className="flex-1 space-y-2">
+        <input
+          ref={inputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleFile}
+        />
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handlePick}
+            disabled={uploading}
+            className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+          >
+            <Upload size={14} />
+            {uploading ? 'Uploading…' : preview ? 'Replace image' : 'Upload image'}
+          </button>
+          {preview && (
+            <button
+              type="button"
+              onClick={() => onChange('')}
+              className="text-xs text-red-600 hover:underline"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+        <input
+          type="text"
+          value={value ?? ''}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="/uploads/..."
+          className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-xs text-gray-600 focus:border-amber-500 focus:ring-2 focus:ring-amber-500 outline-none"
+        />
+      </div>
+    </div>
+  );
 }
 
 export default function CrudPage({ title, endpoint, fields, idField = 'id', queryParams }: CrudPageProps) {
@@ -76,7 +173,6 @@ export default function CrudPage({ title, endpoint, fields, idField = 'id', quer
       delete payload[idField];
       delete payload.created_at;
       delete payload.updated_at;
-      // Remove nested relations from payload
       delete payload.items;
       delete payload.branches;
       delete payload.contact_infos;
@@ -131,7 +227,13 @@ export default function CrudPage({ title, endpoint, fields, idField = 'id', quer
               {fields.map((field) => (
                 <div key={field.key}>
                   <label className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>
-                  {field.type === 'textarea' ? (
+                  {field.type === 'image' ? (
+                    <ImageField
+                      field={field}
+                      value={editItem[field.key]}
+                      onChange={(v) => handleChange(field.key, v)}
+                    />
+                  ) : field.type === 'textarea' ? (
                     <textarea
                       value={editItem[field.key] ?? ''}
                       onChange={(e) => handleChange(field.key, e.target.value)}
@@ -216,13 +318,36 @@ export default function CrudPage({ title, endpoint, fields, idField = 'id', quer
                 items.map((item) => (
                   <tr key={item[idField]} className="hover:bg-gray-50">
                     <td className="px-4 py-3 text-gray-500">{item[idField]}</td>
-                    {tableFields.map((f) => (
-                      <td key={f.key} className="px-4 py-3 text-gray-700 max-w-xs truncate">
-                        {f.type === 'checkbox'
-                          ? (item[f.key] ? '✓' : '✗')
-                          : String(item[f.key] ?? '').substring(0, 80)}
-                      </td>
-                    ))}
+                    {tableFields.map((f) => {
+                      const val = item[f.key];
+                      if (f.type === 'image') {
+                        const src = resolveImage(val);
+                        return (
+                          <td key={f.key} className="px-4 py-3">
+                            {src ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img
+                                src={src}
+                                alt=""
+                                className="h-10 w-14 rounded object-cover border border-gray-200"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).style.display = 'none';
+                                }}
+                              />
+                            ) : (
+                              <span className="text-gray-300">—</span>
+                            )}
+                          </td>
+                        );
+                      }
+                      return (
+                        <td key={f.key} className="px-4 py-3 text-gray-700 max-w-xs truncate">
+                          {f.type === 'checkbox'
+                            ? (val ? '✓' : '✗')
+                            : String(val ?? '').substring(0, 80)}
+                        </td>
+                      );
+                    })}
                     <td className="px-4 py-3 text-right">
                       <div className="flex justify-end gap-2">
                         <button

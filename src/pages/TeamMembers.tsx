@@ -12,7 +12,7 @@ export default function TeamMembers() {
         { key: 'designation_ar', label: 'Designation (AR)', hideInTable: true },
         { key: 'quote_en', label: 'Quote (EN)', type: 'textarea', hideInTable: true },
         { key: 'quote_ar', label: 'Quote (AR)', type: 'textarea', hideInTable: true },
-        { key: 'image_url', label: 'Image URL', hideInTable: true },
+        { key: 'image_url', label: 'Photo', type: 'image', uploadFolder: 'team' },
         { key: 'sort_order', label: 'Sort Order', type: 'number' },
         { key: 'is_active', label: 'Active', type: 'checkbox' },
       ]}
