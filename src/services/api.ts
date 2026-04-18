@@ -73,6 +73,34 @@ export const uploadFile = async (file: File, folder?: string): Promise<MediaFile
   return data;
 };
 
+// Project images (many-per-project)
+export interface ProjectImageOut {
+  id: number;
+  project_id: number;
+  image_url: string;
+  sort_order: number;
+  is_active: boolean;
+}
+
+export const listProjectImages = (projectId: number): Promise<ProjectImageOut[]> =>
+  api.get(`/projects/${projectId}/images`).then((r) => r.data);
+
+export const uploadProjectImage = async (
+  projectId: number,
+  file: File,
+  options?: { sort_order?: number; is_active?: boolean },
+): Promise<ProjectImageOut> => {
+  const form = new FormData();
+  form.append('file', file);
+  if (options?.sort_order != null) form.append('sort_order', String(options.sort_order));
+  if (options?.is_active != null) form.append('is_active', String(options.is_active));
+  const { data } = await api.post<ProjectImageOut>(`/projects/${projectId}/images/upload`, form);
+  return data;
+};
+
+export const deleteProjectImage = (imageId: number): Promise<void> =>
+  api.delete(`/projects/images/${imageId}`).then((r) => r.data);
+
 // Contact submissions
 export const markAsRead = (id: number) =>
   api.put(`/contact-submissions/${id}/read`).then((r) => r.data);
