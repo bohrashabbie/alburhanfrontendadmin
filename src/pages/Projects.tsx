@@ -18,8 +18,8 @@ import {
   listProjectImages,
   uploadProjectImage,
   deleteProjectImage,
-  ProjectImageOut,
 } from '../services/api';
+import type { ProjectImageOut } from '../services/api';
 
 // ---------------------------------------------------------------------------
 // Types
