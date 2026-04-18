@@ -43,6 +43,7 @@ const menuGroups = [
       { label: 'Banners', icon: ImageIcon, path: '/banners' },
       { label: 'Project Categories', icon: FolderKanban, path: '/project-categories' },
       { label: 'Projects', icon: Building2, path: '/projects' },
+      { label: 'Project Images', icon: Image, path: '/project-images' },
     ],
   },
   {

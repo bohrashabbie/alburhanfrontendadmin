@@ -19,6 +19,7 @@ import Products from './pages/Products';
 import Banners from './pages/Banners';
 import ProjectCategories from './pages/ProjectCategories';
 import Projects from './pages/Projects';
+import ProjectImages from './pages/ProjectImages';
 import SocialLinks from './pages/SocialLinks';
 import FooterLinks from './pages/FooterLinks';
 import StaticPages from './pages/StaticPages';
@@ -65,6 +66,7 @@ function AppRoutes() {
         <Route path="/banners" element={<Banners />} />
         <Route path="/project-categories" element={<ProjectCategories />} />
         <Route path="/projects" element={<Projects />} />
+        <Route path="/project-images" element={<ProjectImages />} />
         <Route path="/social-links" element={<SocialLinks />} />
         <Route path="/footer-links" element={<FooterLinks />} />
         <Route path="/static-pages" element={<StaticPages />} />
