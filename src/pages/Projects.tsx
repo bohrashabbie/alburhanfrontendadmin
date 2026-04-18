@@ -20,6 +20,7 @@ import {
   deleteProjectImage,
 } from '../services/api';
 import type { ProjectImageOut } from '../services/api';
+import { resolveImageUrl } from '../lib/images';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -55,12 +56,7 @@ interface CountryRow {
 // Helpers
 // ---------------------------------------------------------------------------
 
-function resolveImage(path?: string | null): string | null {
-  if (!path) return null;
-  if (/^https?:\/\//i.test(path)) return path;
-  if (path.startsWith('/')) return path;
-  return `/${path}`;
-}
+const resolveImage = resolveImageUrl;
 
 // ---------------------------------------------------------------------------
 // Image management modal
