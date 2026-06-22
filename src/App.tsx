@@ -16,6 +16,9 @@ import Branches from './pages/Branches';
 import ContactInfo from './pages/ContactInfo';
 import Brands from './pages/Brands';
 import Products from './pages/Products';
+import ProductCategories from './pages/ProductCategories';
+import ProductImages from './pages/ProductImages';
+import SearchAliases from './pages/SearchAliases';
 import Banners from './pages/Banners';
 import ProjectCategories from './pages/ProjectCategories';
 import Projects from './pages/Projects';
@@ -63,6 +66,9 @@ function AppRoutes() {
         <Route path="/contact-info" element={<ContactInfo />} />
         <Route path="/brands" element={<Brands />} />
         <Route path="/products" element={<Products />} />
+        <Route path="/product-categories" element={<ProductCategories />} />
+        <Route path="/product-images" element={<ProductImages />} />
+        <Route path="/search-aliases" element={<SearchAliases />} />
         <Route path="/banners" element={<Banners />} />
         <Route path="/project-categories" element={<ProjectCategories />} />
         <Route path="/projects" element={<Projects />} />

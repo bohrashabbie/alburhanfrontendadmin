@@ -40,6 +40,9 @@ const menuGroups = [
     items: [
       { label: 'Brands', icon: Tag, path: '/brands' },
       { label: 'Products', icon: Package, path: '/products' },
+      { label: 'Product Categories', icon: FolderKanban, path: '/product-categories' },
+      { label: 'Product Images', icon: Image, path: '/product-images' },
+      { label: 'Search Aliases (SEO)', icon: Tag, path: '/search-aliases' },
       { label: 'Banners', icon: ImageIcon, path: '/banners' },
       { label: 'Project Categories', icon: FolderKanban, path: '/project-categories' },
       { label: 'Projects', icon: Building2, path: '/projects' },
